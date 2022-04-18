@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "compilar": "npx sass sass/sass.scss style/style.css"
   },
   "keywords": [],
   "author": "",
