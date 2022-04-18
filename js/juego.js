@@ -11,7 +11,6 @@ let color;
 let tileX;
 let tileY;
 
-// Variable para el tablero junto con sus dimensiones
 let tablero;
 const filas = 100;
 const columnas = 100;
@@ -22,7 +21,6 @@ const rojo = "#FF0000";
 
 let pausa = true;
 
-//--------------------------------------------------
 // PATRONES
 
 const patron = [
@@ -113,19 +111,16 @@ const patron = [
   ],
 ];
 
-//--------------------------------------------------
-// CADA CASILLA TENDRÁ UN AGENTE
 // eslint-disable-next-line func-names
 const Agente = function (y, x, vivo) {
   this.x = x;
   this.y = y;
   this.vivo = vivo; // vivo=1 / muerto=0
 
-  this.estadoProx = this.vivo; // indica el estado que tendrá el agente en la siguiente generación
+  this.estadoProx = this.vivo;
 
   this.vecinos = [];
 
-  // LO USAMOS PARA CAMBIAR CON EL RATÓN EL AGENTE
   this.cambiaEstado = () => {
     if (this.vivo === true) this.vivo = false;
     else this.vivo = true;
@@ -135,18 +130,15 @@ const Agente = function (y, x, vivo) {
     this.vivo = est;
   };
 
-  // Método que determina sus vecinos (se usa la primera vez, al crear el agente)
   this.addVecinos = () => {
     let xVecino;
     let yVecino;
 
     for (let i = -1; i < 2; i++) {
       for (let j = -1; j < 2; j++) {
-        // Usamos el operador módulo para continuar por los márgenes opuestos al salirnos de la pantalla
         xVecino = (j + this.x + columnas) % columnas;
         yVecino = (i + this.y + filas) % filas;
 
-        // siempre que no estemos en (0,0) ya que seríamos nosotros mismos
         if (i !== 0 || j !== 0) {
           this.vecinos.push(tablero[yVecino][xVecino]);
         }
@@ -154,7 +146,6 @@ const Agente = function (y, x, vivo) {
     }
   };
 
-  // Método que calcula el estado siguiente en función de sus vecinos
   this.nuevoCiclo = () => {
     let suma = 0;
 
@@ -163,15 +154,11 @@ const Agente = function (y, x, vivo) {
       if (this.vecinos[i].vivo === 1) {
         suma++;
       }
-    } // for
-
-    //--------------------------------------
-    // REGLAS PARA SABER EL PRÓXIMO VALOR
+    }
 
     // valor por defecto (se queda como estaba)
     this.estadoProx = this.vivo;
 
-    // Reproducción: si la casilla está vacía (muerto) y hay justo 3 vecinos, se crea vida
     if (this.vivo === 0 && suma === 3) {
       this.estadoProx = 1;
     }
@@ -182,12 +169,10 @@ const Agente = function (y, x, vivo) {
     }
   };
 
-  // Método para cambiar al ciclo siguiente
   this.mutacion = () => {
     this.vivo = this.estadoProx;
   };
 
-  // Método que dibuja el agente en el tablero
   this.dibuja = () => {
     if (this.vivo === 1) color = blanco;
     else color = negro;
@@ -197,7 +182,6 @@ const Agente = function (y, x, vivo) {
   };
 };
 
-// Función que crea un array 2D y devuelve el objeto
 function creaArray2D(rows, cols) {
   const obj = new Array(rows);
   for (let y = 0; y < rows; y++) {
@@ -206,7 +190,6 @@ function creaArray2D(rows, cols) {
   return obj;
 }
 
-// Crea un agente para cada casilla del tablero
 function inicializaTablero(obj, aleatorio) {
   let estado;
 
@@ -243,8 +226,6 @@ function inicia() {
   canvas.width = canvasX;
   canvas.height = canvasY;
 
-  // RATÓN
-
   // eslint-disable-next-line no-use-before-define
   canvas.addEventListener("mousedown", clicRaton, false);
   // eslint-disable-next-line no-use-before-define
@@ -252,35 +233,27 @@ function inicia() {
   // eslint-disable-next-line no-use-before-define
   canvas.addEventListener("mousemove", posicionRaton, false);
 
-  // LECTURA DEL TECLADO
-
   // eslint-disable-next-line no-undef
   document.addEventListener("keyup", (tecla) => {
-    // ESPACIO = PAUSA
     if (tecla.keyCode === 32) {
       // eslint-disable-next-line no-use-before-define
       controlaPausa();
     }
 
-    // R = REINICIAR VACÍO
     if (tecla.keyCode === 82) {
       inicializaTablero(tablero, false);
     }
 
-    // T = REINICIAR ALEATORIO
     if (tecla.keyCode === 84) {
       inicializaTablero(tablero, true);
     }
   });
 
-  // Calculamos el tamaño de los tiles para que sea proporcionado
   tileX = Math.floor(canvasX / filas);
   tileY = Math.floor(canvasY / columnas);
 
-  // Creamos el tablero
   tablero = creaArray2D(filas, columnas);
 
-  // Obj tablero, aleatorio
   inicializaTablero(tablero, false);
 
   setInterval(() => {
@@ -304,10 +277,7 @@ function posicionRaton(e) {
   ratonY = e.pageY;
 }
 
-//----------------------------------------------------------
-
 function cambiaRaton() {
-  // tablero[posY][posX].cambiaEstado();
   const figura = 2;
   let valor;
 
@@ -319,13 +289,11 @@ function cambiaRaton() {
     }
   }
 }
-//----------------------------------------------------------
 
 let posX;
 let posY;
 
 function dibujaTablero(obj) {
-  // DIBUJAMOS
   for (let y = 0; y < filas; y++) {
     for (let x = 0; x < columnas; x++) {
       obj[y][x].dibuja();
